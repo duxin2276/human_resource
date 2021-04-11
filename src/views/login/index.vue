@@ -8,15 +8,15 @@
         </h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="mobile">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          ref="mobile"
+          v-model="loginForm.mobile"
+          placeholder="请输入手机号"
+          name="mobile"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -32,7 +32,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="请输入密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -55,33 +55,28 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-
+import { validMobile } from '@/utils/validate'
+import { mapActions } from 'vuex'
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
+      validMobile(value) ? callback() : callback(new Error('请输入正确的手机号'))
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        mobile: '13800000002', // 手机号
+        password: '123456' // 密码
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        mobile: [
+          { required: true, trigger: 'blur', message: '手机号不能为空' },
+          { validator: validateUsername, trigger: 'blur' }
+        ],
+        password: [
+          { required: true, trigger: 'blur', message: '密码不能为空' },
+          { trigger: 'blur', min: 6, max: 16, message: '请输入6-16位的密码' }
+        ]
       },
       loading: false,
       passwordType: 'password',
@@ -97,6 +92,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['user/toLogin']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -108,18 +104,19 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+      this.$refs.loginForm.validate(async isOk => {
+        if (isOk) {
+          try {
+            // 打开loading
+            this.loading = true
+            await this['user/toLogin'](this.loginForm)
+            this.$router.push('/')
+          } catch (error) {
+            console.log(error)
+          } finally {
+            // 关闭loading
             this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
+          }
         }
       })
     }
@@ -174,7 +171,7 @@ $cursor: #fff;
     color: #454545;
   }
   .el-form-item__error {
-    color: #fff
+    color: #fa1e0e;
   }
   .loginBtn {
     background: #407ffe;
