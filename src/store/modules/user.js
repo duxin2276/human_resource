@@ -8,7 +8,6 @@ const state = {
 const mutations = {
   saveToken(state, token) {
     state.token = token
-
     // 更新本地token
     setToken(token)
   },
@@ -22,7 +21,8 @@ const mutations = {
 
 const actions = {
   async toLogin({ commit }, payLoad) {
-    const { data } = await login(payLoad)
+    const data = await login(payLoad)
+    console.log(data)
     // 返回成功，将token进行保存
     commit('saveToken', data)
   }
