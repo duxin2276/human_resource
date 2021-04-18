@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+import store from '@/store/'
 
 // 创建实例
 const service = axios.create({
@@ -8,7 +9,13 @@ const service = axios.create({
 })
 
 // 请求拦截
-service.interceptors.request.use()
+service.interceptors.request.use(config => {
+  const token = store.getters.token
+  if (token) config.headers['Authorization'] = `Bearer ${token}`
+  return config // 必须返回
+}, error => {
+  return Promise.reject(error)
+})
 
 // 响应拦截
 service.interceptors.response.use(response => {

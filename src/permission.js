@@ -5,7 +5,7 @@ import 'nprogress/nprogress'
 
 const whiteList = ['/login', '/404']
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   // 开启加载条
   nprogress.start()
   // 判断是否有token
@@ -13,6 +13,8 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       next('/')
     } else {
+      // 是否有用户信息
+      (!store.getters.userId) && await store.dispatch('user/getuserInfo')
       next()
     }
   } else {
