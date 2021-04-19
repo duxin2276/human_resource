@@ -1,4 +1,4 @@
-import { setToken, getToken, removeToken } from '@/utils/auth'
+import { setToken, getToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { login, userInfo, getUserDetailById } from '@/api/user'
 
 const state = {
@@ -36,6 +36,9 @@ const actions = {
     const data = await login(payLoad)
     // 返回成功，将token进行保存
     commit('saveToken', data)
+
+    // 将时间戳存入到本地
+    setTimeStamp()
   },
 
   // 获取用户信息
