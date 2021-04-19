@@ -1,5 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import approvalsRoute from './modules/approvals'
+import attendancesRoute from './modules/attendances'
+import departmentsRoute from './modules/departments'
+import employeesRoute from './modules/employees'
+import permissionRoute from './modules/permission'
+import salarysRoute from './modules/salarys'
+import settingRoute from './modules/setting'
+import socialRoute from './modules/social'
 
 Vue.use(Router)
 
@@ -59,10 +67,22 @@ export const constantRoutes = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
+// 动态路由
+const dynamicRoutes = [
+  approvalsRoute,
+  attendancesRoute,
+  departmentsRoute,
+  employeesRoute,
+  permissionRoute,
+  salarysRoute,
+  settingRoute,
+  socialRoute
+]
+
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: [...constantRoutes, ...dynamicRoutes]
 })
 
 const router = createRouter()
