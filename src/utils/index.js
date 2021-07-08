@@ -115,3 +115,26 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 将数组数据类型 转换 成 树类型
+export const changeListToTree = (list, rootValue = '') => {
+  const arr = []
+
+  // 遍历当前数组
+  list.forEach(item => {
+    // 判断当前项的 pid 是否等于前一项的id
+    if (item.pid === rootValue) {
+      // 当前项的pid 和 前一项的 id 相等
+      const children = changeListToTree(list, item.id)
+
+      if (children.length) {
+        item.children = children
+      }
+
+      // 如果相等 推到新数组中
+      arr.push(item)
+    }
+  })
+
+  return arr
+}
