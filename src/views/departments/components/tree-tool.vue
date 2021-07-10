@@ -59,9 +59,11 @@ export default {
     handleCommand(type) {
       if (type === 'add') {
         // 添加
-
+        this.$emit('addDept', this.obj)
       } else if (type === 'edit') {
         // 编辑
+
+        this.$emit('editDept', this.obj)
       } else {
         // 删除
         this.$http({
